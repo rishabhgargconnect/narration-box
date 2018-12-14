@@ -15,6 +15,6 @@ public class NarrationBoxApplication {
 
     @RequestMapping(value = "/")
     public String hello() {
-        return "Here is your story, now deployed on Heroku.com!";
+        return "Here is your story, now deployed on Heroku!";
     }
 }
