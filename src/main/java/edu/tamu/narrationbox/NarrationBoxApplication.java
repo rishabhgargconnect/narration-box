@@ -15,6 +15,6 @@ public class NarrationBoxApplication {
 
     @RequestMapping(value = "/")
     public String hello() {
-        return "Here is your story, now deployed on HEROKU";
+        return "Here is your story, now deployed on HEROKU.";
     }
 }
