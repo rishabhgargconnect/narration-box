@@ -1,4 +1,4 @@
-# narration-box
+# narration-box!
 
 As REST API built over a framework to automatically generate states of characters in a story, based on the states of the characters in their surrounding. 
 
@@ -9,3 +9,8 @@ Steps to build and Install (Without docker):
 
 
 URL of current stable version: https://narration-box.herokuapp.com
+
+
+Swagger documentation:
+Swagger UI: https://narration-box.herokuapp.com/swagger-ui.html 
+API Doc: https://narration-box.herokuapp.com/v2/api-docs
