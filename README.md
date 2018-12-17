@@ -10,7 +10,6 @@ Steps to build and Install (Without docker):
 
 URL of current stable version: https://narration-box.herokuapp.com
 
-
 Swagger documentation:
 Swagger UI: https://narration-box.herokuapp.com/swagger-ui.html 
 API Doc: https://narration-box.herokuapp.com/v2/api-docs
