@@ -1,14 +1,15 @@
 package edu.tamu.narrationbox.model;
 
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-import java.util.UUID;
 
 /*The story class*/
 @Data
+@Document(collection = "story")
 public class Story {
-    public UUID Id;
-    public String Title;
-    public List<Panel> panels;
+    private String Id;
+    private String Title;
+    private List<Panel> panels;
 }

@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class Panel {
-    public List<Character> listOfCharacters;
+    private List<Character> listOfCharacters;
 }

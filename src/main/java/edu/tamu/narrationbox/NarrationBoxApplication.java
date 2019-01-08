@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @SpringBootApplication(exclude = {ErrorMvcAutoConfiguration.class})
 @RestController
 public class NarrationBoxApplication {
