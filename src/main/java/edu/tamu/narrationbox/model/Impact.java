@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Impact {
-    private Character byCharacter;
-    private Float[][] impactMatrix;
+    private String byCharacter;
+    private double[][] impactMatrix;
 }
