@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 
 /*
 * The character taking part in the narration. The entity
@@ -17,4 +19,5 @@ public class Character {
     private Personality personality;
     private Impact[] relations;
     private Identity identity;
+    private List<String> stateIds;
 }
