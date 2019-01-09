@@ -21,6 +21,12 @@ public class StateController{
         return stateRepository.findAll().toArray(new State[0]);
     }
 
+    @RequestMapping(value ="{id}", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation("Get a state registered in the system.")
+    public State getState(@PathVariable("id") String id){
+        return stateRepository.findById(id).orElse(null);
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation("Register a state in the system.")
     public String createStates(@RequestBody State state) {

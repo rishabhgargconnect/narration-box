@@ -9,4 +9,7 @@ import lombok.Data;
 *  to an individual personality in the narration */
 @Data
 public class Identity {
+    private String Id;
+    private String title;
+    private String path;
 }
