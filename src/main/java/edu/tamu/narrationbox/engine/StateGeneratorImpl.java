@@ -87,7 +87,7 @@ public class StateGeneratorImpl implements StateGenerator {
                     }
                 }
 
-                double[] normalizedStateVector = mathComponent.normalizeProbablityVector(nextState);
+                double[] normalizedStateVector = mathComponent.normalizeVector(nextState);
                 StateValues newStateValue =  new StateValues();
                 newStateValue.setStateDescriptorId(idOfState);
                 newStateValue.setValue(normalizedStateVector);

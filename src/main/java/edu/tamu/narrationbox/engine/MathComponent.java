@@ -2,7 +2,9 @@ package edu.tamu.narrationbox.engine;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Random;
+import java.util.stream.DoubleStream;
 
 @Component
 public class MathComponent {
@@ -39,15 +41,63 @@ public class MathComponent {
         return transitionMatrix;
     }
 
-    public double[] getNextState(double[][] matrix, double[] value) {
-        return value;
+    /*Logic:
+    *
+    * Let us assume we have the current state as a probability vector [S1, S2, S3]
+    * And the transition matrix has value:
+    *           [[S11, S12, S13],
+    *            [S21, S22, S23],
+    *            [S31, S32, S33]]
+    *
+    * Here, each row represents the markov probabilities for transition from state
+    * at Si in the probability vector.Each row adds upto 1.
+    *
+    * We take num_of_iterations as a configurable value of the number of iterations
+    * we use to calculate the next state.
+    *
+    * For num_of_iterations times we generate a new index from the current state.
+    * Now we chose the row in the transition vector for this index in the state.
+    * And from the probability matrix in this row, we get a new state.
+    *
+    * We thus count the number of times each state got generated, and normalize it to form a probability vector,
+    * representing the next state
+    */
+    public double[] getNextStateFromTransitionMatrix(double[][] matrix, double[] value, int num_of_iterations) {
+        double[] nextState = new double[value.length];
+
+        for (int i = 0; i < num_of_iterations; i++) {
+            int indexOfProbability
+                    = getIndexOfNextStateFromProbabilityVector(value);
+            int indexOfSampleInNextState
+                    = getIndexOfNextStateFromProbabilityVector(matrix[indexOfProbability]);
+            nextState[indexOfSampleInNextState]++;
+
+        }
+        return normalizeVector(nextState);
+    }
+
+    public int getIndexOfNextStateFromProbabilityVector(double[] probabilityVector){
+        double cumulativeSum = 0.0d;
+        double newRandomNumber = new Random().nextDouble();
+        for(int i = 0; i < probabilityVector.length; i++){
+            cumulativeSum += probabilityVector[i];
+            if(newRandomNumber <= cumulativeSum){
+                return i;
+            }
+        }
+        throw new MathematicalFallacyException("Probability vector values don't add upto 1");
     }
 
     public double[] addStateComponent(double[] currentState, double impactWeight, double[] stateComponent) {
-        return  currentState;
+        for (int i = 0; i < currentState.length; i++){
+            currentState[i] += impactWeight * stateComponent[i];
+        }
+        return currentState;
     }
 
-    public double[] normalizeProbablityVector(double[] value) {
-        return value;
+    public double[] normalizeVector(double[] vector) {
+        DoubleStream probabilityVectorStream = Arrays.stream(vector);
+        double sum = probabilityVectorStream.sum();
+        return probabilityVectorStream.map(operand -> operand/sum).toArray();
     }
 }

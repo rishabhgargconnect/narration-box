@@ -23,7 +23,6 @@ public class CharacterController{
     @Autowired
     public StateRepository stateRepository;
 
-
     @Autowired
     public MathComponent mathComponent;
 
@@ -40,7 +39,7 @@ public class CharacterController{
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    @ApiOperation("Register a character in the system. Will Autogenerate the missing matrices if value not present")
+    @ApiOperation("Register a character in the system. Will Auto-generate the missing matrices if value not present")
     public String createCharacters(@RequestBody Character character) {
         //TODO: Validate
        for(TransitionMatrix transitionMatrix: character.getPersonality()){
