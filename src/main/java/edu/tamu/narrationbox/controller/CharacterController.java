@@ -1,7 +1,12 @@
 package edu.tamu.narrationbox.controller;
 
+import edu.tamu.narrationbox.engine.MathComponent;
 import edu.tamu.narrationbox.model.Character;
+import edu.tamu.narrationbox.model.Impact;
+import edu.tamu.narrationbox.model.State;
+import edu.tamu.narrationbox.model.TransitionMatrix;
 import edu.tamu.narrationbox.repository.CharacterRepository;
+import edu.tamu.narrationbox.repository.StateRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +19,12 @@ public class CharacterController{
 
     @Autowired
     public CharacterRepository characterRepository;
+
+    @Autowired
+    public StateRepository stateRepository;
+
+    @Autowired
+    public MathComponent mathComponent;
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ApiOperation("Get all the characters registered in the system.")
@@ -28,10 +39,29 @@ public class CharacterController{
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    @ApiOperation("Register a character in the system.")
+    @ApiOperation("Register a character in the system. Will Auto-generate the missing matrices if value not present")
     public String createCharacters(@RequestBody Character character) {
-        characterRepository.save(character);
-        return "Success";
+        //TODO: Validate
+       for(TransitionMatrix transitionMatrix: character.getPersonality()){
+           State s = stateRepository.findById(transitionMatrix.getStateDescriptorId()).get();
+           FillMatrixIfEmpty(transitionMatrix, s);
+       }
+
+       for(Impact relation: character.getRelations()){
+           for(TransitionMatrix transitionMatrix: relation.getImpact()){
+               State s = stateRepository.findById(transitionMatrix.getStateDescriptorId()).get();
+               FillMatrixIfEmpty(transitionMatrix, s);
+           }
+       }
+
+       characterRepository.save(character);
+       return "Success";
+    }
+
+    private void FillMatrixIfEmpty(TransitionMatrix t, State s) {
+        if(t.isEmpty()){
+            t.setMatrix(mathComponent.generateTransitionMatrix(s.getSizeOfMatrix(), s.getSizeOfMatrix()));
+        }
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)

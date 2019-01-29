@@ -22,14 +22,14 @@ public class StoryController{
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ApiOperation(value = "Create a Story using the defined params")
     public Story createStory(@RequestBody StoryCreationParams storyCreationParams){
-        //TODO: Sanity check on story creation params object
+
         return stateGenerator.generateNewStory(storyCreationParams);
 
     }
 
-    @ApiOperation(value = "Create a Story using the defined params")
+    @RequestMapping(method = RequestMethod.POST, produces = "application/jsom")
+    @ApiOperation(value = "Create the new states of the characters in the story")
     public Story generateNewStateInStory(@RequestBody Story story){
         return stateGenerator.generateNewStateInStory(story);
-
     }
 }
