@@ -4,8 +4,10 @@ import edu.tamu.narrationbox.model.Image;
 import edu.tamu.narrationbox.repository.ImageRepository;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -23,11 +25,18 @@ public class ImageController {
 
     @RequestMapping(value = "{identityId}",
             method = RequestMethod.GET,
-            produces = "application/json")
+            produces = MediaType.IMAGE_PNG_VALUE)
     @ApiOperation("Get a image registered in the system.")
-    public List<Image> getImage(@PathVariable("identityId") String identityId,
+    public byte[] getImage(@PathVariable("identityId") String identityId,
                                 @RequestParam(value = "emotion", required = false) String emotion){
-        return imageRepository.findByImageMatchingAttributes(identityId, emotion);
+        List<Image> images = imageRepository.findByImageMatchingAttributes(identityId, emotion);
+        if(images.isEmpty()){
+            return null;
+        }
+        String image = images.get(0).getFile();
+        return Base64.getDecoder().decode
+                (image.substring(2, image.length()-1)); //Remove /b which gets added from script
+
     }
 
     @RequestMapping(method = RequestMethod.POST)
