@@ -27,7 +27,7 @@ public class StoryController{
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = "application/jsom")
+    @RequestMapping(path = "addState",method = RequestMethod.POST, produces = "application/json")
     @ApiOperation(value = "Create the new states of the characters in the story")
     public Story generateNewStateInStory(@RequestBody Story story){
         return stateGenerator.generateNewStateInStory(story);

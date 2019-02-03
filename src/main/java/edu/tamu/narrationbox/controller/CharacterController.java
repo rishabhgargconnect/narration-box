@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://domain2.com")
 @RequestMapping(value = "/characters/")
 @Api(description = "The descriptions of the characters in the story")
 public class CharacterController{

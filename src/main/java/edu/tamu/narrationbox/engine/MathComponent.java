@@ -17,18 +17,10 @@ public class MathComponent {
         Random random = new Random();
         for (int i = 0; i < size; i++)
         {
-            a [i] = 1.0d - random.nextDouble();
-            a [i] = -1 * Math.log(a[i]);
-            s += a[i];
+            a [i] = Math.floor(100 *random.nextDouble()) / 100;
+                            //We truncate beyond 2 decimal points
         }
-        double sum = 0.0d;
-        for (int i = 0; i < size-1; i++)
-        {
-            a [i] /= s;
-            sum+=a[i];
-        }
-        a[size-1] = 1-sum;
-        return a;
+        return normalizeVector(a);
     }
 
     /*Generate a One Dimensional vector, where all elements sum up to One*/
@@ -99,5 +91,13 @@ public class MathComponent {
         DoubleStream probabilityVectorStream = Arrays.stream(vector);
         double sum = probabilityVectorStream.sum();
         return probabilityVectorStream.map(operand -> operand/sum).toArray();
+    }
+
+    public int getIndexOfLargestComponent(double[] vector){
+        int indexOfLargestElement = 0;
+        for (int i = 0; i < vector.length; i++) {
+            indexOfLargestElement = vector[i] > vector[indexOfLargestElement] ? i : indexOfLargestElement;
+        }
+        return indexOfLargestElement;
     }
 }
