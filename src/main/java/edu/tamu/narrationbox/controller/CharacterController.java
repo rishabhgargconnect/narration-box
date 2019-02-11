@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://domain2.com")
 @RequestMapping(value = "/characters/")
 @Api(description = "The descriptions of the characters in the story")
 public class CharacterController{
@@ -47,14 +46,12 @@ public class CharacterController{
            State s = stateRepository.findById(transitionMatrix.getStateDescriptorId()).get();
            FillMatrixIfEmpty(transitionMatrix, s);
        }
-
-       for(Impact relation: character.getRelations()){
-           for(TransitionMatrix transitionMatrix: relation.getImpact()){
+       for(Impact relation: character.getRelations()) {
+           for (TransitionMatrix transitionMatrix : relation.getImpact()) {
                State s = stateRepository.findById(transitionMatrix.getStateDescriptorId()).get();
                FillMatrixIfEmpty(transitionMatrix, s);
            }
        }
-
        characterRepository.save(character);
        return "Success";
     }
