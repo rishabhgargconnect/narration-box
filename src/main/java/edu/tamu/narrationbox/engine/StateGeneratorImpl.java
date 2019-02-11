@@ -1,7 +1,7 @@
 package edu.tamu.narrationbox.engine;
 
-import edu.tamu.narrationbox.model.*;
 import edu.tamu.narrationbox.model.Character;
+import edu.tamu.narrationbox.model.*;
 import edu.tamu.narrationbox.repository.CharacterRepository;
 import edu.tamu.narrationbox.repository.StateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,9 @@ import java.util.List;
 
 @Service
 public class StateGeneratorImpl implements StateGenerator {
+
+    //TODO:@Value("${spring.math.num_of_iterations}")
+    private int NUM_OF_ITERATIONS=10;
 
     @Autowired
     private CharacterRepository characterRepository;
@@ -45,6 +48,9 @@ public class StateGeneratorImpl implements StateGenerator {
                 StateValues stateValues = new StateValues();
                 stateValues.setStateDescriptorId(state.getId());
                 stateValues.setValue(mathComponent.generateProbabilityVector(state.getSizeOfMatrix()));
+
+                stateValues.setValueAtIndexOfLargestComponent(state.getIndices()
+                        .get(mathComponent.getIndexOfNextStateFromProbabilityVector(stateValues.getValue())));
                 listOfStateValues.add(stateValues);
             }
 
@@ -60,7 +66,7 @@ public class StateGeneratorImpl implements StateGenerator {
     @Override
     public Story generateNewStateInStory(Story story) {
         List<CharacterState> newListOfCharacterStates = new ArrayList<CharacterState>();
-        for (CharacterState characterState : (story.getPanels()).get(story.getPanels().size()).getListOfCharacterStates()) {
+        for (CharacterState characterState : (story.getPanels()).get(story.getPanels().size()-1).getListOfCharacterStates()) {
             String idOfCharacter = characterState.getCharacterId();
             List<StateValues> listOfNewStateValuesForCharacter = new ArrayList<>();
             Character character = characterRepository.findById(idOfCharacter).get();
@@ -69,28 +75,36 @@ public class StateGeneratorImpl implements StateGenerator {
                 int lengthOfStateVector = stateValue.getValue().length;
                 double[] nextState = new double[lengthOfStateVector];
                 for(TransitionMatrix relatedPersonalityVector : character.getPersonality()){
-                    if(relatedPersonalityVector.getStateDescriptorId() == idOfState){
-                        nextState = getNextState(
+                    if(relatedPersonalityVector.getStateDescriptorId().equals(idOfState)){
+                        nextState = mathComponent.getNextStateFromTransitionMatrix(
                                 relatedPersonalityVector.getMatrix(),
-                                stateValue.getValue());
+                                stateValue.getValue(),
+                                NUM_OF_ITERATIONS);
                     }
                 }
 
                 for (Impact relation : character.getRelations()) {
                     for (TransitionMatrix transitionMatrix : relation.getImpact()) {
-                        if (transitionMatrix.getStateDescriptorId() == idOfState) {
+                        if (transitionMatrix.getStateDescriptorId().equals(idOfState)) {
                             double impactWeight = transitionMatrix.getImpactWeight();
                             nextState = mathComponent.addStateComponent
                                     (nextState, impactWeight,
-                                            getNextState(transitionMatrix.getMatrix(), stateValue.getValue()));
+                                            mathComponent.getNextStateFromTransitionMatrix
+                                                    (transitionMatrix.getMatrix(),
+                                                            stateValue.getValue(),
+                                                            NUM_OF_ITERATIONS));
                         }
                     }
                 }
 
                 double[] normalizedStateVector = mathComponent.normalizeVector(nextState);
+                double[] roundedStateVector = mathComponent.roundOffVector(normalizedStateVector, 2);//TODO: Recheck
                 StateValues newStateValue =  new StateValues();
                 newStateValue.setStateDescriptorId(idOfState);
-                newStateValue.setValue(normalizedStateVector);
+                newStateValue.setValue(roundedStateVector);
+                newStateValue.setValueAtIndexOfLargestComponent(
+                        stateRepository.findById(idOfState).get().getIndices()
+                        .get(mathComponent.getIndexOfNextStateFromProbabilityVector(roundedStateVector)));
                 listOfNewStateValuesForCharacter.add(newStateValue);
             }
             CharacterState newCharacterState = new CharacterState();
@@ -100,10 +114,7 @@ public class StateGeneratorImpl implements StateGenerator {
         }
         Panel p = new Panel();
         p.setListOfCharacterStates(newListOfCharacterStates);
+        story.getPanels().add(p);
         return story;
-    }
-
-    private double[] getNextState(double[][] matrix, double[] value) {
-        return value;
     }
 }

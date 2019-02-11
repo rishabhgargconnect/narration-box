@@ -6,4 +6,5 @@ import lombok.Data;
 public class StateValues {
     private String StateDescriptorId;
     private double[] value;
+    private String valueAtIndexOfLargestComponent;
 }

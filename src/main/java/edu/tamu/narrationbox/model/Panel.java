@@ -7,5 +7,4 @@ import java.util.List;
 @Data
 public class Panel {
     private List<CharacterState> listOfCharacterStates;
-
 }
