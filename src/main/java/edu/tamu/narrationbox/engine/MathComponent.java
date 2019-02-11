@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.stream.DoubleStream;
 
 @Component
 public class MathComponent {
@@ -17,10 +16,9 @@ public class MathComponent {
         Random random = new Random();
         for (int i = 0; i < size; i++)
         {
-            a [i] = Math.floor(100 *random.nextDouble()) / 100;
-                            //We truncate beyond 2 decimal points
+            a [i] = random.nextDouble();
         }
-        return normalizeVector(a);
+        return roundOffVector(normalizeVector(a), 2);//We truncate beyond 2 decimal points
     }
 
     /*Generate a One Dimensional vector, where all elements sum up to One*/
@@ -63,9 +61,19 @@ public class MathComponent {
             int indexOfSampleInNextState
                     = getIndexOfNextStateFromProbabilityVector(matrix[indexOfProbability]);
             nextState[indexOfSampleInNextState]++;
-
         }
-        return normalizeVector(nextState);
+        return normalizeVector(nextState);//We round off before normalizing
+    }
+
+    public double[] roundOffVector(double[] vector, int digits){
+        double sum = 0;
+        double multiplier = Math.pow(10, digits);
+        for (int i = 0; i <vector.length-1 ; i++) {
+            vector[i] = Math.round(multiplier * vector[i])/multiplier;
+            sum += vector[i];
+        }
+        vector[vector.length-1] = Math.round((1.0 - sum)* multiplier) / multiplier;
+        return vector;
     }
 
     public int getIndexOfNextStateFromProbabilityVector(double[] probabilityVector){
@@ -88,15 +96,15 @@ public class MathComponent {
     }
 
     public double[] normalizeVector(double[] vector) {
-        DoubleStream probabilityVectorStream = Arrays.stream(vector);
-        double sum = probabilityVectorStream.sum();
-        return probabilityVectorStream.map(operand -> operand/sum).toArray();
+        double sum = Arrays.stream(vector).sum();
+        return Arrays.stream(vector).map(operand -> operand/sum).toArray();
     }
 
     public int getIndexOfLargestComponent(double[] vector){
         int indexOfLargestElement = 0;
         for (int i = 0; i < vector.length; i++) {
-            indexOfLargestElement = vector[i] > vector[indexOfLargestElement] ? i : indexOfLargestElement;
+            indexOfLargestElement =
+                    (vector[i] > vector[indexOfLargestElement]) ? i : indexOfLargestElement;
         }
         return indexOfLargestElement;
     }
