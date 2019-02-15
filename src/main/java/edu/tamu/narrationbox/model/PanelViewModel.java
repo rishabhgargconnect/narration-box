@@ -14,11 +14,19 @@ public class PanelViewModel {
     public PanelViewModel(Panel panel){
         characters= new ArrayList<>();
         for(CharacterState charState : panel.getListOfCharacterStates()){
+            if(!panel.getCharactersToDisplay().contains(charState.getCharacterId()))
+                continue;
+
             Map<String, String> attributes = new HashMap<>();
             attributes.put("character-name", charState.getCharacterId());
             for (StateValues sv: charState.getCharacterStates() ){
                 attributes.put(sv.getStateDescriptorId(),
                         sv.getValueAtIndexOfLargestComponent());
+                if(sv.getCausality()!= null && !sv.getCausality().isEmpty()) {
+                    attributes.put(String.format("%s_causality",
+                            sv.getStateDescriptorId()),
+                            sv.getCausality());
+                }
             }
             characters.add(attributes);
         }

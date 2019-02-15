@@ -1,7 +1,5 @@
-package edu.tamu.narrationbox.controller;
+package edu.tamu.narrationbox.model;
 
-import edu.tamu.narrationbox.model.PanelViewModel;
-import edu.tamu.narrationbox.model.Story;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 

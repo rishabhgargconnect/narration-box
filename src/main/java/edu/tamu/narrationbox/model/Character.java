@@ -16,7 +16,8 @@ import java.util.List;
 public class Character {
     @Id
     private String id;
-    private TransitionMatrix[] personality;
+    private double probabilityOfOccurence;
+    private List<TransitionMatrix> personality;
     private Impact[] relations;
     private Identity identity;
     private List<String> stateIds;

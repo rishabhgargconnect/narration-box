@@ -35,7 +35,7 @@ public class ImageController {
         }
         String image = images.get(0).getFile();
         return Base64.getDecoder().decode
-                (image.substring(2, image.length()-1)); //Remove /b which gets added from script
+                (image.substring(2, image.length()-1)); //Remove /b which gets added from the python script
 
     }
 

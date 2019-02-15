@@ -88,13 +88,6 @@ public class MathComponent {
         throw new MathematicalFallacyException("Probability vector values don't add upto 1");
     }
 
-    public double[] addStateComponent(double[] currentState, double impactWeight, double[] stateComponent) {
-        for (int i = 0; i < currentState.length; i++){
-            currentState[i] += impactWeight * stateComponent[i];
-        }
-        return currentState;
-    }
-
     public double[] normalizeVector(double[] vector) {
         double sum = Arrays.stream(vector).sum();
         return Arrays.stream(vector).map(operand -> operand/sum).toArray();

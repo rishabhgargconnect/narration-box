@@ -14,4 +14,5 @@ public class Story {
     private String  id;
     private String title;
     private List<Panel> panels;
+    private List<String> characterIds;
 }
