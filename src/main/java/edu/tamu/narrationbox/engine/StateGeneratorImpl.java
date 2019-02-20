@@ -103,8 +103,7 @@ public class StateGeneratorImpl implements StateGenerator {
                                             .filter(x-> (x.getStateDescriptorId().equals(idOfState)))
                                             .findFirst()
                                             .get()
-                                            .getMatrix()
-                                            :
+                                            .getMatrix():
                                     Arrays.stream(character.getRelations())
                                             .filter(x-> x.getByCharacter()
                                             .equals(requiredCharacterPair.getKey()))
