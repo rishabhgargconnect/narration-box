@@ -5,7 +5,6 @@ import edu.tamu.narrationbox.model.Character;
 import edu.tamu.narrationbox.model.*;
 import edu.tamu.narrationbox.repository.CharacterRepository;
 import edu.tamu.narrationbox.repository.StateRepository;
-import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,7 +118,7 @@ public class StateGeneratorImpl implements StateGenerator {
             //Value: List of Pairs where
             //          Item1=>  Character bringing in the influence
             //          Item2=>  The weight of the influence from te character
-            Map<String, List<Pair<String, Double>>> impactWeights = new HashMap<>();
+            Map<String, List<CharacterWeight>> impactWeights = new HashMap<>();
             AddWeightsToImpactMap(character.getPersonality(), idOfCharacter, impactWeights);
             for (Impact characterRelation: character.getRelations()){
                 AddWeightsToImpactMap(characterRelation.getImpact(), characterRelation.getByCharacter(), impactWeights);
@@ -135,13 +134,13 @@ public class StateGeneratorImpl implements StateGenerator {
                 List<String> stateIndices = stateRepository.findById(idOfState).get().getIndices();
 
                 double[] impactVectorOnCharacter
-                        = impactWeights.get(idOfState).stream().mapToDouble(x->x.getValue()).toArray();
+                        = impactWeights.get(idOfState).stream().mapToDouble(x->x.getImpactWeight()).toArray();
 
                 int indexOfImpactingCharacter
                         = mathComponent.getIndexOfNextStateFromProbabilityVector(impactVectorOnCharacter);
 
-                Pair<String, Double> requiredCharacterPair = impactWeights.get(idOfState).get(indexOfImpactingCharacter);
-                String impactingCharacterId = requiredCharacterPair.getKey();
+                CharacterWeight impactingCharacterWeight = impactWeights.get(idOfState).get(indexOfImpactingCharacter);
+                String impactingCharacterId = impactingCharacterWeight.getCharacterId();
                 
                 LOGGER.trace("Markov chain says impacting character is {}", impactingCharacterId);
 
@@ -190,7 +189,7 @@ public class StateGeneratorImpl implements StateGenerator {
                 StateValues newStateValue =  new StateValues();
                 newStateValue.setStateDescriptorId(idOfState);
                 newStateValue.setValue(roundedStateVector);
-                newStateValue.setCausality(requiredCharacterPair.getKey());
+                newStateValue.setCausality(impactingCharacterId);
 
                 String indexOfNewState = stateIndices.get(
                         mathComponent.getIndexOfLargestComponent(roundedStateVector));
@@ -215,13 +214,13 @@ public class StateGeneratorImpl implements StateGenerator {
 
     private void AddWeightsToImpactMap(Iterable<TransitionMatrix> matrices,
                                        String characterId,
-                                       Map<String, List<Pair<String, Double>>> impactWeights) {
+                                       Map<String, List<CharacterWeight>> impactWeights) {
         for(TransitionMatrix transitionMatrix : matrices){
             if(!impactWeights.containsKey(transitionMatrix.getStateDescriptorId())){
                 impactWeights.put(transitionMatrix.getStateDescriptorId(), new ArrayList());
             }
             impactWeights.get(transitionMatrix.getStateDescriptorId())
-                    .add(new Pair(characterId, transitionMatrix.getImpactWeight()));
+                    .add(new CharacterWeight(characterId, transitionMatrix.getImpactWeight()));
         }
     }
 }
