@@ -14,8 +14,7 @@ public class MathComponent {
         double a[] = new double[size];
         double s = 0.0d;
         Random random = new Random();
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++){
             a [i] = random.nextDouble();
         }
         return roundOffVector(normalizeVector(a), 2);//We truncate beyond 2 decimal points
@@ -54,7 +53,6 @@ public class MathComponent {
     */
     public double[] getNextStateFromTransitionMatrix(double[][] matrix, double[] value, int num_of_iterations) {
         double[] nextState = new double[value.length];
-
         for (int i = 0; i < num_of_iterations; i++) {
             int indexOfProbability
                     = getIndexOfNextStateFromProbabilityVector(value);
