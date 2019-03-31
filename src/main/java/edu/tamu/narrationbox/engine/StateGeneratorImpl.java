@@ -79,7 +79,6 @@ public class StateGeneratorImpl implements StateGenerator {
         }
         panel.setListOfCharacterStates(characterStates);
 
-        //TODO: Confirm with professor Ergun
         List<String> listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(charactersInStory);
         while(listOfOccuringCharacters.isEmpty()){
             listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(charactersInStory);
@@ -121,8 +120,13 @@ public class StateGeneratorImpl implements StateGenerator {
             Map<String, List<CharacterWeight>> impactWeights = new HashMap<>();
             AddWeightsToImpactMap(character.getPersonality(), idOfCharacter, impactWeights);
             for (Impact characterRelation: character.getRelations()){
-                AddWeightsToImpactMap(characterRelation.getImpact(), characterRelation.getByCharacter(), impactWeights);
+                if (!isCharacterInStory(listOfCharacters, characterRelation))
+                    continue;
+
+                AddWeightsToImpactMap(characterRelation.getImpact(),
+                        characterRelation.getByCharacter(), impactWeights);
             }
+
             List<StateValues> listOfNewStateValuesForCharacter = new ArrayList<>();
             for (StateValues stateValue : characterState.getCharacterStates()) {
                 String idOfState = stateValue.getStateDescriptorId();
@@ -134,7 +138,9 @@ public class StateGeneratorImpl implements StateGenerator {
                 List<String> stateIndices = stateRepository.findById(idOfState).get().getIndices();
 
                 double[] impactVectorOnCharacter
-                        = impactWeights.get(idOfState).stream().mapToDouble(x->x.getImpactWeight()).toArray();
+                        = mathComponent.normalizeVector(
+                                impactWeights.get(idOfState).stream()
+                                        .mapToDouble(x->x.getImpactWeight()).toArray());
 
                 int indexOfImpactingCharacter
                         = mathComponent.getIndexOfNextStateFromProbabilityVector(impactVectorOnCharacter);
@@ -210,6 +216,15 @@ public class StateGeneratorImpl implements StateGenerator {
         p.setCharactersToDisplay(characterSelector.getListOfCharactersWhichOccur(listOfCharacters));
         story.getPanels().add(p);
         return story;
+    }
+
+    private boolean isCharacterInStory(Iterable<Character> listOfCharacters, Impact characterRelation) {
+       for(Character c : listOfCharacters){
+            if(c.getId().equals(characterRelation.getByCharacter())){
+               return true;
+            }
+        }
+        return false;
     }
 
     private void AddWeightsToImpactMap(Iterable<TransitionMatrix> matrices,
