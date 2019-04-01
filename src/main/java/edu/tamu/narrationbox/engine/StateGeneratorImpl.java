@@ -29,6 +29,9 @@ public class StateGeneratorImpl implements StateGenerator {
     private CharacterRepository characterRepository;
 
     @Autowired
+    private TextGenerator textGenerator;
+
+    @Autowired
     private StateRepository stateRepository;
 
     @Autowired
@@ -66,9 +69,10 @@ public class StateGeneratorImpl implements StateGenerator {
                 stateValues.setStateDescriptorId(state.getId());
                 stateValues.setValue
                         (mathComponent.generateProbabilityVector(state.getSizeOfMatrix()));
-
-                stateValues.setValueAtIndexOfLargestComponent(state.getIndices()
-                        .get(mathComponent.getIndexOfNextStateFromProbabilityVector(stateValues.getValue())));
+                String stateValueAtLasrgestIndex = state.getIndices()
+                        .get(mathComponent.getIndexOfNextStateFromProbabilityVector(stateValues.getValue()));
+                stateValues.setValueAtIndexOfLargestComponent(stateValueAtLasrgestIndex);
+                stateValues.setStateText(textGenerator.getCausalityText(character.getId(),  null,stateValueAtLasrgestIndex, null));
                 listOfStateValues.add(stateValues);
             }
 
@@ -201,6 +205,9 @@ public class StateGeneratorImpl implements StateGenerator {
                         mathComponent.getIndexOfLargestComponent(roundedStateVector));
                 newStateValue.setValueAtIndexOfLargestComponent(indexOfNewState);
 
+                newStateValue.setStateText(textGenerator.getCausalityText(character.getId(),
+                        impactingCharacterId,indexOfNewState, oldStateIndex ));
+
                 LOGGER.trace("New state value for the state:{} of the character {} is {}",
                         idOfState, idOfCharacter, indexOfNewState);
 
@@ -213,7 +220,14 @@ public class StateGeneratorImpl implements StateGenerator {
         }
         Panel p = new Panel();
         p.setListOfCharacterStates(newListOfCharacterStates);
-        p.setCharactersToDisplay(characterSelector.getListOfCharactersWhichOccur(listOfCharacters));
+
+        List<String> listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(listOfCharacters);
+        while(listOfOccuringCharacters.isEmpty()){
+            listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(listOfCharacters);
+            LOGGER.info("Had to regenerate characters to display because it rendered an empty list");
+        }
+        p.setCharactersToDisplay(listOfOccuringCharacters);
+
         story.getPanels().add(p);
         return story;
     }

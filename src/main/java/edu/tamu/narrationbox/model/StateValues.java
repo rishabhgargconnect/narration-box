@@ -8,4 +8,5 @@ public class StateValues {
     private String StateDescriptorId;
     private double[] value;
     private String valueAtIndexOfLargestComponent;
+    private String stateText;
 }

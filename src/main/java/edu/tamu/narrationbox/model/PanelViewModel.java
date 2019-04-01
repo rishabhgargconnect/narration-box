@@ -27,6 +27,7 @@ public class PanelViewModel {
                             sv.getStateDescriptorId()),
                             sv.getCausality());
                 }
+                attributes.put("state_text", sv.getStateText());
             }
             characters.add(attributes);
         }
