@@ -72,7 +72,7 @@ public class StateGeneratorImpl implements StateGenerator {
                 String stateValueAtLasrgestIndex = state.getIndices()
                         .get(mathComponent.getIndexOfNextStateFromProbabilityVector(stateValues.getValue()));
                 stateValues.setValueAtIndexOfLargestComponent(stateValueAtLasrgestIndex);
-                stateValues.setStateText(textGenerator.getCausalityText(character.getId(),  null,stateValueAtLasrgestIndex, null));
+                stateValues.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),  null,stateValueAtLasrgestIndex, null));
                 listOfStateValues.add(stateValues);
             }
 
@@ -107,12 +107,7 @@ public class StateGeneratorImpl implements StateGenerator {
                                                     .getListOfCharacterStates()) {
             String idOfCharacter = characterState.getCharacterId();
 
-            Character character = null;
-            for(Character c : listOfCharacters){
-                if(c.getId().equals(idOfCharacter)){
-                    character = c;
-                }
-            }
+            Character character = getCharacter(listOfCharacters, idOfCharacter);
 
             // We build a impact weight matrix where each entry
             // has a value which equals to the list of weights
@@ -196,6 +191,8 @@ public class StateGeneratorImpl implements StateGenerator {
 
                 LOGGER.trace("New State of character {} is {}.", character.getId(), roundedStateVector);
 
+                Character impactingCharacter = getCharacter(listOfCharacters, impactingCharacterId);
+
                 StateValues newStateValue =  new StateValues();
                 newStateValue.setStateDescriptorId(idOfState);
                 newStateValue.setValue(roundedStateVector);
@@ -205,8 +202,8 @@ public class StateGeneratorImpl implements StateGenerator {
                         mathComponent.getIndexOfLargestComponent(roundedStateVector));
                 newStateValue.setValueAtIndexOfLargestComponent(indexOfNewState);
 
-                newStateValue.setStateText(textGenerator.getCausalityText(character.getId(),
-                        impactingCharacterId,indexOfNewState, oldStateIndex ));
+                newStateValue.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),
+                        impactingCharacter.getIdentity().getTitle(),indexOfNewState, oldStateIndex ));
 
                 LOGGER.trace("New state value for the state:{} of the character {} is {}",
                         idOfState, idOfCharacter, indexOfNewState);
@@ -230,6 +227,16 @@ public class StateGeneratorImpl implements StateGenerator {
 
         story.getPanels().add(p);
         return story;
+    }
+
+    private Character getCharacter(Iterable<Character> listOfCharacters, String idOfCharacter) {
+        Character character = null;
+        for(Character c : listOfCharacters){
+            if(c.getId().equals(idOfCharacter)){
+                character = c;
+            }
+        }
+        return character;
     }
 
     private boolean isCharacterInStory(Iterable<Character> listOfCharacters, Impact characterRelation) {
