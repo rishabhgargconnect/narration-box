@@ -72,7 +72,8 @@ public class StateGeneratorImpl implements StateGenerator {
                 String stateValueAtLasrgestIndex = state.getIndices()
                         .get(mathComponent.getIndexOfNextStateFromProbabilityVector(stateValues.getValue()));
                 stateValues.setValueAtIndexOfLargestComponent(stateValueAtLasrgestIndex);
-                stateValues.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),  null,stateValueAtLasrgestIndex, null));
+                stateValues.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),
+                        null,stateValueAtLasrgestIndex, null, character.getGender()));
                 listOfStateValues.add(stateValues);
             }
 
@@ -203,7 +204,7 @@ public class StateGeneratorImpl implements StateGenerator {
                 newStateValue.setValueAtIndexOfLargestComponent(indexOfNewState);
 
                 newStateValue.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),
-                        impactingCharacter.getIdentity().getTitle(),indexOfNewState, oldStateIndex ));
+                        impactingCharacter.getIdentity().getTitle(),indexOfNewState, oldStateIndex, character.getGender() ));
 
                 LOGGER.trace("New state value for the state:{} of the character {} is {}",
                         idOfState, idOfCharacter, indexOfNewState);

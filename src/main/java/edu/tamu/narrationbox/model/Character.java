@@ -16,6 +16,7 @@ import java.util.List;
 public class Character {
     @Id
     private String id;
+    private String gender;
     private double probabilityOfOccurence;
     private List<TransitionMatrix> personality;
     private Impact[] relations;
