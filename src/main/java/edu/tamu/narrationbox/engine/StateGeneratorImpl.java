@@ -69,11 +69,11 @@ public class StateGeneratorImpl implements StateGenerator {
                 stateValues.setStateDescriptorId(state.getId());
                 stateValues.setValue
                         (mathComponent.generateProbabilityVector(state.getSizeOfMatrix()));
-                String stateValueAtLasrgestIndex = state.getIndices()
-                        .get(mathComponent.getIndexOfNextStateFromProbabilityVector(stateValues.getValue()));
-                stateValues.setValueAtIndexOfLargestComponent(stateValueAtLasrgestIndex);
+                String stateValueAtLargestIndex = state.getIndices()
+                        .get(mathComponent.getIndexOfLargestComponent(stateValues.getValue()));
+                stateValues.setValueAtIndexOfLargestComponent(stateValueAtLargestIndex);
                 stateValues.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),
-                        null,stateValueAtLasrgestIndex, null, character.getGender()));
+                        null,stateValueAtLargestIndex, null, character.getGender()));
                 listOfStateValues.add(stateValues);
             }
 
