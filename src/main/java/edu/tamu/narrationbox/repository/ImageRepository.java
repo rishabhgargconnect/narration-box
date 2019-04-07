@@ -10,4 +10,7 @@ public interface ImageRepository extends MongoRepository<Image, String> {
 
     @Query("{'identity' :?0, 'emotion': ?1}")
     List<Image> findByImageMatchingAttributes(String characterIdentity, String emotionalState);
+
+    @Query("{'emotion': 'default'}")
+    List<Image> findDefaultImageOfAllCharacters();
 }

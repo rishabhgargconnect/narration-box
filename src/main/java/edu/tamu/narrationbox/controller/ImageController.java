@@ -17,6 +17,12 @@ public class ImageController {
     @Autowired
     public ImageRepository imageRepository;
 
+    @RequestMapping(value = "default", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation("Get the default pic of all the images registered in the system.")
+    public Image[] getDefaultImages(){
+        return imageRepository.findDefaultImageOfAllCharacters().toArray(new Image[0]);
+    }
+
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ApiOperation("Get all the images registered in the system.")
     public Image[] getAllImages(){
