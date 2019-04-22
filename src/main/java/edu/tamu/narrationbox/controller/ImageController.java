@@ -45,6 +45,17 @@ public class ImageController {
 
     }
 
+    @RequestMapping(value = "ids", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation("Get the ids of images registered in the system.")
+    public String[] getAllImageIds(@RequestParam(value = "category", required = false) String category){
+        if(category== null){
+            return imageRepository.findAll().stream().map(  x->x.getIdentity()).distinct().toArray(String[]::new);
+        }
+
+        String[] images =  imageRepository.findAll().stream().filter(x->x.getPath().contains(category)).map(  x->x.getIdentity()).distinct().toArray(String[]::new);
+        return images;
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation("Register a image in the system.")
     public String createImage(@RequestBody Image image) {

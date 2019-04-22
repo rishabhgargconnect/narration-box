@@ -7,6 +7,7 @@ import lombok.Data;
 public class TransitionMatrix {
     private String stateDescriptorId;
     private double impactWeight;
+    private double likenessScore;
     private double[][] matrix;
 
     @JsonIgnore

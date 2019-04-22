@@ -6,6 +6,7 @@ import lombok.Data;
 public class Image {
     String identity;
     String emotion;
+    String path;
     String file;
 }
 

@@ -57,8 +57,11 @@ public class CharacterController{
     }
 
     private void FillMatrixIfEmpty(TransitionMatrix t, State s) {
-        if(t.isEmpty()){
+        if(t.isEmpty() && t.getLikenessScore() == -1){
             t.setMatrix(mathComponent.generateTransitionMatrix(s.getSizeOfMatrix(), s.getSizeOfMatrix()));
+        }
+        else{
+            t.setMatrix(mathComponent.generateTransitionMatrix(s.getDefault_min(), s.getDefault_max(), t.getLikenessScore(), s.getSizeOfMatrix()));
         }
     }
 

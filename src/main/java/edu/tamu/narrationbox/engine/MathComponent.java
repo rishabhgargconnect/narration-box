@@ -99,4 +99,16 @@ public class MathComponent {
         }
         return indexOfLargestElement;
     }
+
+    public double[][] generateTransitionMatrix(double[][] default_min, double[][] default_max, double likenessScore, int size) {
+        double[][] resultMatrix = new double[size][size];
+        for (int i = 0; i < size; i++){
+            for (int j = 0; j< size; j++){
+                resultMatrix[i][j] = likenessScore * default_min[i][j] + (1-likenessScore) * default_max[i][j];
+            }
+            resultMatrix[i] = normalizeVector(resultMatrix[i]);
+            resultMatrix[i] = roundOffVector(resultMatrix[i], 2);
+        }
+        return resultMatrix;
+    }
 }
