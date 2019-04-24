@@ -45,6 +45,21 @@ public class ImageController {
 
     }
 
+    @RequestMapping(value = "{identityId}",
+            method = RequestMethod.DELETE,
+            produces = MediaType.IMAGE_PNG_VALUE)
+    @ApiOperation("Delete a specific emotion of an image or entire image from the system.")
+    public String deleteImage(@PathVariable("identityId") String identityId,
+                           @RequestParam(value = "emotion", required = false) String emotion){
+        if(emotion != null && emotion != ""){
+            imageRepository.deleteImageMatchingAttributes(identityId, emotion);
+        }
+        else {
+            imageRepository.deleteImageIdentity(identityId);
+        }
+        return "Success";
+    }
+
     @RequestMapping(value = "ids", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation("Get the ids of images registered in the system.")
     public String[] getAllImageIds(@RequestParam(value = "category", required = false) String category){
