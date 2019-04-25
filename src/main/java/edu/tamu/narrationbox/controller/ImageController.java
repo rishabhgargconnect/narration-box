@@ -37,7 +37,7 @@ public class ImageController {
                                 @RequestParam(value = "emotion", required = false) String emotion){
         List<Image> images = imageRepository.findByImageMatchingAttributes(identityId, emotion);
         if(images.isEmpty()){
-            return null;
+            imageRepository.findByImageMatchingAttributes(identityId, "default");
         }
         String image = images.get(0).getFile();
         return Base64.getDecoder().decode
