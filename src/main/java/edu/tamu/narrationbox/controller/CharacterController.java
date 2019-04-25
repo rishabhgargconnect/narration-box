@@ -1,10 +1,8 @@
 package edu.tamu.narrationbox.controller;
 
 import edu.tamu.narrationbox.engine.MathComponent;
+import edu.tamu.narrationbox.model.*;
 import edu.tamu.narrationbox.model.Character;
-import edu.tamu.narrationbox.model.Impact;
-import edu.tamu.narrationbox.model.State;
-import edu.tamu.narrationbox.model.TransitionMatrix;
 import edu.tamu.narrationbox.repository.CharacterRepository;
 import edu.tamu.narrationbox.repository.StateRepository;
 import io.swagger.annotations.Api;
@@ -38,9 +36,9 @@ public class CharacterController{
         return characterRepository.findById(id).orElse(null);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ApiOperation("Register a character in the system. Will Auto-generate the missing matrices if value not present")
-    public String createCharacters(@RequestBody Character character) {
+    public Response createCharacters(@RequestBody Character character) {
         //TODO: Validate
        for(TransitionMatrix transitionMatrix: character.getPersonality()){
            State s = stateRepository.findById(transitionMatrix.getStateDescriptorId()).get();
@@ -53,7 +51,7 @@ public class CharacterController{
            }
        }
        characterRepository.save(character);
-       return "Success";
+       return new Response("Success");
     }
 
     private void FillMatrixIfEmpty(TransitionMatrix t, State s) {
