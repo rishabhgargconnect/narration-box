@@ -1,6 +1,7 @@
 package edu.tamu.narrationbox.model;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.List;
 @Data
 @Document(collection = "story")
 public class Story {
-    private String Id;
-    private String Title;
+    @Id
+    private String  id;
+    private String title;
     private List<Panel> panels;
+    private List<String> characterIds;
 }
