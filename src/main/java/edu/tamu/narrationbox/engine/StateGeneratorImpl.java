@@ -138,9 +138,9 @@ public class StateGeneratorImpl implements StateGenerator {
                 List<String> stateIndices = stateRepository.findById(idOfState).get().getIndices();
 
                 double[] impactVectorOnCharacter
-                        = mathComponent.normalizeVector(
+                        = mathComponent.roundOffVector(mathComponent.normalizeVector(
                                 impactWeights.get(idOfState).stream()
-                                        .mapToDouble(x->x.getImpactWeight()).toArray());
+                                        .mapToDouble(x->x.getImpactWeight()).toArray()), 2);
 
                 int indexOfImpactingCharacter
                         = mathComponent.getIndexOfNextStateFromProbabilityVector(impactVectorOnCharacter);

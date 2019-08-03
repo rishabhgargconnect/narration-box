@@ -80,7 +80,4 @@ public class StoryController{
         storyRepository.save(newStory);
         return new PanelViewModel(newStory.getPanels().get(newStory.getPanels().size()-1));
     }
-
-
-
 }

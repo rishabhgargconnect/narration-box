@@ -4,7 +4,9 @@ import edu.tamu.narrationbox.model.Image;
 import edu.tamu.narrationbox.repository.ImageRepository;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
@@ -33,16 +35,15 @@ public class ImageController {
             method = RequestMethod.GET,
             produces = MediaType.IMAGE_PNG_VALUE)
     @ApiOperation("Get a image registered in the system.")
-    public byte[] getImage(@PathVariable("identityId") String identityId,
-                                @RequestParam(value = "emotion", required = false) String emotion){
+    public ResponseEntity<byte[]> getImage(@PathVariable("identityId") String identityId,
+                    @RequestParam(value = "emotion", required = false) String emotion){
         List<Image> images = imageRepository.findByImageMatchingAttributes(identityId, emotion);
         if(images.isEmpty()){
-            return null;
-            //imageRepository.findByImageMatchingAttributes(identityId, "default");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         String image = images.get(0).getFile();
-        return Base64.getDecoder().decode
-                (image.substring(2, image.length()-1)); //Remove /b which gets added from the python script
+        return new ResponseEntity<>(Base64.getDecoder().decode
+                (image.substring(2, image.length()-1)), HttpStatus.OK); //Remove /b which gets added from the python script
 
     }
 

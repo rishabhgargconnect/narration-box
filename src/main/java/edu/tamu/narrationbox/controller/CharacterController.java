@@ -10,6 +10,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/characters/")
 @Api(description = "The descriptions of the characters in the story")
@@ -38,7 +40,7 @@ public class CharacterController{
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ApiOperation("Register a character in the system. Will Auto-generate the missing matrices if value not present")
-    public Response createCharacters(@RequestBody Character character) {
+    public Response createCharacters(@Valid @RequestBody Character character) {
         //TODO: Validate
        for(TransitionMatrix transitionMatrix: character.getPersonality()){
            State s = stateRepository.findById(transitionMatrix.getStateDescriptorId()).get();
