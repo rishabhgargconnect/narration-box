@@ -21,7 +21,7 @@ public class TextGeneratorImpl implements TextGenerator {
 
     @Override
     public String getCausalityText(String characterId, String impactingCharacterId, String state, String impactingCharacterState, String gender) {
-        String pronoun = gender.equals("Male") ? "He" : "She";
+        String pronoun = gender.equalsIgnoreCase("Male") ? "He" : "She";
         if (impactingCharacterId != null && impactingCharacterState != null
                 && !impactingCharacterId.isEmpty() && !impactingCharacterState.isEmpty()) {
             if(impactingCharacterId.equals(characterId) && impactingCharacterState.equals(state)){
