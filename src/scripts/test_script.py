@@ -77,7 +77,7 @@ def upload_folder(path_of_folder, root):
 
 
 #%%
-directory_path ="C:\\Users\\nbhat\\Documents"
+directory_path =r"C:\Users\nbhat\Documents\Comic\Image folder\images"
 def parse_for_characters(directory_path): 
     for root, _, files in os.walk(directory_path):
         if files is not None and 'default.png' in files:
