@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.aggregation.BooleanOperators;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -57,10 +58,24 @@ public class StateGeneratorImpl implements StateGenerator {
         return story;
     }
 
-    private Panel GeneratePanel(Iterable<String> listOfCharacterIds) {
+    private int getSizeOfIterable(Iterable iterable){
+        int count = 0;
+        Iterator iterator = iterable.iterator();
+        while(iterator.hasNext()) {
+            iterator.next();
+            count++;
+        }
+        return count;
+    }
+
+    private Panel GeneratePanel(Iterable<String> listOfCharacterIds){
         Panel panel = new Panel();
         ArrayList<CharacterState> characterStates = new ArrayList<>();
         Iterable<Character> charactersInStory = characterRepository.findAllById(listOfCharacterIds);
+        if(getSizeOfIterable(charactersInStory) != getSizeOfIterable(listOfCharacterIds)){
+            throw new RuntimeException("Characters provided in list not found");
+        }
+
         for (Character character : charactersInStory) {
             List<StateValues> listOfStateValues = new ArrayList<>();
             Iterable<State> statesOfCharacter = stateRepository.findAllById(character.getStateIds());
