@@ -43,8 +43,6 @@ def resize_and_encode(full_file_path, dim):
     image = Image.open(full_file_path)
     image_format = image.format
     resize_dimensions = (dim, math.floor(image.size[1] / image.size[0] * (dim)))
-    #print(f"Original size:{image.size}")
-    #print(f"Resized size: {resize_dimensions}")
     image = image.resize(resize_dimensions,Image.ANTIALIAS)
 
     encoded_string = base64_encode_file_contents(image, image_format)
