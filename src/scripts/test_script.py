@@ -6,6 +6,7 @@ import base64
 import requests
 import os
 import io
+import math
 from PIL import Image
 
 #%%
@@ -41,7 +42,10 @@ def is_path_an_image_file(full_file_path):
 def resize_and_encode(full_file_path, dim):
     image = Image.open(full_file_path)
     image_format = image.format
-    image = image.resize(dim,Image.ANTIALIAS)
+    resize_dimensions = (dim, math.floor(image.size[1] / image.size[0] * (dim)))
+    #print(f"Original size:{image.size}")
+    #print(f"Resized size: {resize_dimensions}")
+    image = image.resize(resize_dimensions,Image.ANTIALIAS)
 
     encoded_string = base64_encode_file_contents(image, image_format)
     return encoded_string
@@ -52,7 +56,7 @@ def upload_folder(path_of_folder, root):
     for file in os.listdir(path_of_folder):
         full_file_path = os.path.join(path_of_folder, file)
         if(is_path_an_image_file(full_file_path)):
-            encoded_string = resize_and_encode(full_file_path, (256, 256))
+            encoded_string = resize_and_encode(full_file_path, 256)
             json_data = {
                 'path': str.replace(os.path.relpath(path_of_folder, root), '\\', '/'),
                 'identity': name_of_folder,
@@ -64,7 +68,7 @@ def upload_folder(path_of_folder, root):
             print(r)
 
             if(os.path.splitext(file)[0] == 'default'):
-                encoded_string = resize_and_encode(full_file_path, (48, 48))
+                encoded_string = resize_and_encode(full_file_path, 64)
                 json_data = {
                     'path': str.replace(os.path.relpath(path_of_folder, root), '\\', '/'),
                     'identity': name_of_folder,
@@ -85,6 +89,3 @@ def parse_for_characters(directory_path):
 
 for path_of_character in parse_for_characters(directory_path):
     upload_folder(path_of_character, directory_path)
-
-
-#%%
