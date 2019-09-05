@@ -4,13 +4,11 @@ import edu.tamu.narrationbox.model.Image;
 import edu.tamu.narrationbox.model.TreeNode;
 import edu.tamu.narrationbox.repository.ImageRepository;
 import io.swagger.annotations.ApiOperation;
-import javafx.scene.control.TreeView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sun.reflect.generics.tree.Tree;
 
 import java.text.MessageFormat;
 import java.util.Base64;
