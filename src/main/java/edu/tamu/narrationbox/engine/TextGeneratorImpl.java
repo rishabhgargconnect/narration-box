@@ -25,17 +25,17 @@ public class TextGeneratorImpl implements TextGenerator {
         if (impactingCharacterId != null && impactingCharacterState != null
                 && !impactingCharacterId.isEmpty() && !impactingCharacterState.isEmpty()) {
             if(impactingCharacterId.equals(characterId) && impactingCharacterState.equals(state)){
-                return MessageFormat.format("{0} stays {1}. {2} says ", characterId, pastParticiple.get(state), pronoun);
+                return MessageFormat.format("{0} stays {1}. {2} says", characterId, pastParticiple.get(state), pronoun);
             }
             else if(impactingCharacterId.equals(characterId) && !impactingCharacterState.equals(state)){
-                return MessageFormat.format("{0} goes from being {1} to {2}. {3} says ", characterId, pastParticiple.get(impactingCharacterState), pastParticiple.get(state), pronoun);
+                return MessageFormat.format("{0} goes from being {1} to {2}. {3} says", characterId, pastParticiple.get(impactingCharacterState), pastParticiple.get(state), pronoun);
             }
             else{
-                return MessageFormat.format("{0} is {1} because {2} is {3}. {4} says ", characterId, pastParticiple.get(state), impactingCharacterId, pastParticiple.get(impactingCharacterState), pronoun);
+                return MessageFormat.format("{0} is {1} because {2} is {3}. {4} says", characterId, pastParticiple.get(state), impactingCharacterId, pastParticiple.get(impactingCharacterState), pronoun);
             }
         }
         else {
-            return MessageFormat.format("{0} is {1}. {2} says ", characterId, pastParticiple.get(state), pronoun);
+            return MessageFormat.format("{0} is {1}. {2} says", characterId, pastParticiple.get(state), pronoun);
         }
     }
 }

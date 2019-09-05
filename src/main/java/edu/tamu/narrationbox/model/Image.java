@@ -8,5 +8,6 @@ public class Image {
     String emotion;
     String path;
     String file;
+    String type;
 }
 

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.aggregation.BooleanOperators;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -53,14 +54,28 @@ public class StateGeneratorImpl implements StateGenerator {
         Panel panel = GeneratePanel(storyCreationParams.getCharactersInStory());
         story.setPanels(Arrays.asList(panel));
 
-        LOGGER.trace("CREATED NEW STORY:\n", gson.toJson(story));
+        LOGGER.trace("CREATED NEW STORY:\n" + gson.toJson(story));
         return story;
     }
 
-    private Panel GeneratePanel(Iterable<String> listOfCharacterIds) {
+    private int getSizeOfIterable(Iterable iterable){
+        int count = 0;
+        Iterator iterator = iterable.iterator();
+        while(iterator.hasNext()) {
+            iterator.next();
+            count++;
+        }
+        return count;
+    }
+
+    private Panel GeneratePanel(Iterable<String> listOfCharacterIds){
         Panel panel = new Panel();
         ArrayList<CharacterState> characterStates = new ArrayList<>();
         Iterable<Character> charactersInStory = characterRepository.findAllById(listOfCharacterIds);
+        if(getSizeOfIterable(charactersInStory) != getSizeOfIterable(listOfCharacterIds)){
+            throw new RuntimeException("Characters provided in list not found");
+        }
+
         for (Character character : charactersInStory) {
             List<StateValues> listOfStateValues = new ArrayList<>();
             Iterable<State> statesOfCharacter = stateRepository.findAllById(character.getStateIds());
@@ -83,19 +98,16 @@ public class StateGeneratorImpl implements StateGenerator {
             characterStates.add(charState);
         }
         panel.setListOfCharacterStates(characterStates);
+        LOGGER.trace("Number of character states while creating: " + characterStates.size());
 
-        List<String> listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(charactersInStory);
-        while(listOfOccuringCharacters.isEmpty()){
-            listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(charactersInStory);
-            LOGGER.info("Had to regenerate characters to display because it rendered an empty list");
-        }
-        panel.setCharactersToDisplay(listOfOccuringCharacters);
+        List<String> listOfOccurringCharacters = getListOfCharactersToDisplay(charactersInStory);
+        panel.setCharactersToDisplay(listOfOccurringCharacters);
         return panel;
     }
 
     @Override
     public Story generateNewStateInStory(Story story) {
-        List<CharacterState> newListOfCharacterStates = new ArrayList<CharacterState>();
+        List<CharacterState> newListOfCharacterStates = new ArrayList<>();
         Iterable<Character> listOfCharacters =characterRepository.findAllById(story.getCharacterIds());
         int numberOfPanels = story.getPanels().size();
 
@@ -167,6 +179,8 @@ public class StateGeneratorImpl implements StateGenerator {
                                 .findFirst().get()
                                 .getMatrix();
 
+                LOGGER.trace("Number of characters in previous panel: {}", story.getPanels().get(numberOfPanels -1 ).getListOfCharacterStates().size());
+
                 double[] stateValueOfImpactingCharacter = story.getPanels().get(numberOfPanels -1 ) //Get Last Panel
                                     .getListOfCharacterStates()
                                     .stream().filter(x->x.getCharacterId().equals(impactingCharacterId))
@@ -219,15 +233,21 @@ public class StateGeneratorImpl implements StateGenerator {
         Panel p = new Panel();
         p.setListOfCharacterStates(newListOfCharacterStates);
 
-        List<String> listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(listOfCharacters);
-        while(listOfOccuringCharacters.isEmpty()){
-            listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(listOfCharacters);
-            LOGGER.info("Had to regenerate characters to display because it rendered an empty list");
-        }
-        p.setCharactersToDisplay(listOfOccuringCharacters);
+
+        List<String> listOfOccurringCharacters = getListOfCharactersToDisplay(listOfCharacters);
+        p.setCharactersToDisplay(listOfOccurringCharacters);
 
         story.getPanels().add(p);
         return story;
+    }
+
+    private List<String> getListOfCharactersToDisplay(Iterable<Character> listOfCharacters) {
+        List<String> listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(listOfCharacters);
+        while (listOfOccuringCharacters.isEmpty()) {
+            listOfOccuringCharacters = characterSelector.getListOfCharactersWhichOccur(listOfCharacters);
+            LOGGER.info("Had to regenerate characters to display because it rendered an empty list");
+        }
+        return listOfOccuringCharacters;
     }
 
     private Character getCharacter(Iterable<Character> listOfCharacters, String idOfCharacter) {
