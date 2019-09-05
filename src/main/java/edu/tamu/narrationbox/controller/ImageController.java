@@ -1,14 +1,18 @@
 package edu.tamu.narrationbox.controller;
 
 import edu.tamu.narrationbox.model.Image;
+import edu.tamu.narrationbox.model.TreeNode;
 import edu.tamu.narrationbox.repository.ImageRepository;
 import io.swagger.annotations.ApiOperation;
+import javafx.scene.control.TreeView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sun.reflect.generics.tree.Tree;
 
+import java.text.MessageFormat;
 import java.util.Base64;
 import java.util.List;
 
@@ -64,13 +68,26 @@ public class ImageController {
 
     @RequestMapping(value = "ids", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation("Get the ids of images registered in the system.")
-    public String[] getAllImageIds(@RequestParam(value = "category", required = false) String category){
-        if(category== null){
+    public String[] getAllImageIds(){
             return imageRepository.findAll().stream().map(  x->x.getIdentity()).distinct().toArray(String[]::new);
+    }
+
+    @RequestMapping(value = "node", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation("Get the node in the system.")
+    public TreeNode getNode(@RequestParam(value = "category", required = false) String path){
+        if(path == null){
+            path = "";
         }
 
-        String[] images =  imageRepository.findAll().stream().filter(x->x.getPath().contains(category)).map(  x->x.getIdentity()).distinct().toArray(String[]::new);
-        return images;
+        String regexPath = MessageFormat.format("^{0}\\/[\\w-]+(?!\\/)$", path) ;
+        TreeNode node = new TreeNode();
+        node.setCategories(imageRepository.getImagesOnPath(regexPath, "category").stream().map(x-> getNameOfCharacter(x.getPath())).toArray(String[]::new));
+        node.setCharacters(imageRepository.getImagesOnPath(regexPath, "character").stream().map(x->x.getPath()).toArray(String[]::new));
+        return node;
+    }
+
+    private String getNameOfCharacter(String s){
+        return s.substring(s.lastIndexOf('/') + 1).trim();
     }
 
     @RequestMapping(method = RequestMethod.POST)

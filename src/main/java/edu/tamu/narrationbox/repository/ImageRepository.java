@@ -20,4 +20,7 @@ public interface ImageRepository extends MongoRepository<Image, String> {
 
     @DeleteQuery("{'identity' :?0}")
     void deleteImageIdentity(String characterIdentity);
+
+    @Query("{ 'path':{$regex:?0}, 'type' : ?1 }")
+    List<Image> getImagesOnPath(String pathRegex, String category );
 }
