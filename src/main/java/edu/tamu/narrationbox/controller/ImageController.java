@@ -81,8 +81,8 @@ public class ImageController {
 
         String regexPath = MessageFormat.format("^{0}\\/[\\w-]+(?!\\/)$", path) ;
         TreeNode node = new TreeNode();
-        node.setCategories(imageRepository.getImagesOnPath(regexPath, "category").stream().map(x-> getNameOfCharacter(x.getPath())).toArray(String[]::new));
-        node.setCharacters(imageRepository.getImagesOnPath(regexPath, "character").stream().map(x->x.getPath()).toArray(String[]::new));
+        node.setCategories(imageRepository.getImagesOnPath(regexPath, "category").stream().map(x-> (x.getPath())).toArray(String[]::new));
+        node.setCharacters(imageRepository.getImagesOnPath(regexPath, "character").stream().map(x-> getNameOfCharacter(x.getPath())).toArray(String[]::new));
         return node;
     }
 
