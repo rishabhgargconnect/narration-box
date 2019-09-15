@@ -9,4 +9,5 @@ public class StateValues {
     private double[] value;
     private String valueAtIndexOfLargestComponent;
     private String stateText;
+    private String expressionText;
 }

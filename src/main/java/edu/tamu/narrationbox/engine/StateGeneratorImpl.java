@@ -41,6 +41,9 @@ public class StateGeneratorImpl implements StateGenerator {
     @Autowired
     private CharacterSelector characterSelector;
 
+    @Autowired
+    private ExpressionGenerator expressionGenerator;
+
     @Override
     public Story generateNewStory(StoryCreationParams storyCreationParams) {
 
@@ -89,6 +92,7 @@ public class StateGeneratorImpl implements StateGenerator {
                 stateValues.setValueAtIndexOfLargestComponent(stateValueAtLargestIndex);
                 stateValues.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),
                         null,stateValueAtLargestIndex, null, character.getGender()));
+                stateValues.setExpressionText(expressionGenerator.getExpressionFromState(stateValueAtLargestIndex, character.getExpressivenessScore() ));
                 listOfStateValues.add(stateValues);
             }
 
@@ -210,6 +214,8 @@ public class StateGeneratorImpl implements StateGenerator {
 
                 StateValues newStateValue =  new StateValues();
                 newStateValue.setStateDescriptorId(idOfState);
+                newStateValue.setExpressionText(expressionGenerator.getExpressionFromState(idOfState, character.getExpressivenessScore() ));
+
                 newStateValue.setValue(roundedStateVector);
                 newStateValue.setCausality(impactingCharacterId);
 

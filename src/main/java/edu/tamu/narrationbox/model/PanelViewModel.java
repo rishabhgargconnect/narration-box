@@ -28,6 +28,7 @@ public class PanelViewModel {
                             sv.getCausality());
                 }
                 attributes.put("state_text", sv.getStateText());
+                attributes.put("expression_text", sv.getExpressionText());
             }
             characters.add(attributes);
         }
