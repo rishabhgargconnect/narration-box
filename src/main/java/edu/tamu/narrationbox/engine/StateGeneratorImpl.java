@@ -214,7 +214,6 @@ public class StateGeneratorImpl implements StateGenerator {
 
                 StateValues newStateValue =  new StateValues();
                 newStateValue.setStateDescriptorId(idOfState);
-                newStateValue.setExpressionText(expressionGenerator.getExpressionFromState(idOfState, character.getExpressivenessScore() ));
 
                 newStateValue.setValue(roundedStateVector);
                 newStateValue.setCausality(impactingCharacterId);
@@ -222,6 +221,9 @@ public class StateGeneratorImpl implements StateGenerator {
                 String indexOfNewState = stateIndices.get(
                         mathComponent.getIndexOfLargestComponent(roundedStateVector));
                 newStateValue.setValueAtIndexOfLargestComponent(indexOfNewState);
+
+                newStateValue.setExpressionText(expressionGenerator.getExpressionFromState(indexOfNewState, character.getExpressivenessScore() ));
+
 
                 newStateValue.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),
                         impactingCharacter.getIdentity().getTitle(),indexOfNewState, oldStateIndex, character.getGender() ));

@@ -48,13 +48,13 @@ public class ExpressionGeneratorImpl implements ExpressionGenerator {
         happyDistribution.setE(0.6);
 
         //Expressive Distribution List
-        expressiveDistributionList.clear();
+        expressiveDistributionList = new ArrayList<>();
         expressiveDistributionList.add(new Pair<>(0.6, "Laughing"));
         expressiveDistributionList.add(new Pair<>(0.4, "Smiling"));
         happyDistribution.setExpressiveDistributionVector(expressiveDistributionList);
 
         //UnExpressive Distribution List
-        unExpressiveDistributionList.clear();
+        unExpressiveDistributionList = new ArrayList<>();
         unExpressiveDistributionList.add(new Pair<>(0.3, "subtle smile"));
         unExpressiveDistributionList.add(new Pair<>(0.5, "default"));
         unExpressiveDistributionList.add(new Pair<>(0.2, "indifferent"));
@@ -68,13 +68,13 @@ public class ExpressionGeneratorImpl implements ExpressionGenerator {
         shameDistribution.setE(0.4);
 
         //Expressive Distribution List
-        expressiveDistributionList.clear();
+        expressiveDistributionList = new ArrayList<>();
         expressiveDistributionList.add(new Pair<>(0.7, "crying"));
         expressiveDistributionList.add(new Pair<>(0.3, "guilty"));
         shameDistribution.setExpressiveDistributionVector(expressiveDistributionList);
 
         //UnExpressive Distribution List
-        unExpressiveDistributionList.clear();
+        unExpressiveDistributionList = new ArrayList<>();
         unExpressiveDistributionList.add(new Pair<>(0.5, "sad"));
         unExpressiveDistributionList.add(new Pair<>(0.5, "default"));
         shameDistribution.setUnExpressiveDistributionVector(unExpressiveDistributionList);
@@ -85,18 +85,17 @@ public class ExpressionGeneratorImpl implements ExpressionGenerator {
         surpriseDistribution.setE(0.6);
 
         //Expressive Distribution List
-        expressiveDistributionList.clear();
+        expressiveDistributionList = new ArrayList<>();
         expressiveDistributionList.add(new Pair<>(0.2, "shocked"));
         expressiveDistributionList.add(new Pair<>(0.8, "amazed"));
         surpriseDistribution.setExpressiveDistributionVector(expressiveDistributionList);
 
         //UnExpressive Distribution List
-        unExpressiveDistributionList.clear();
+        unExpressiveDistributionList = new ArrayList<>();
         unExpressiveDistributionList.add(new Pair<>(1.0, "default"));
         surpriseDistribution.setUnExpressiveDistributionVector(unExpressiveDistributionList);
 
-        mapExpressionDistribution = new HashMap<>();
-        mapExpressionDistribution.put("shame",surpriseDistribution);
+        mapExpressionDistribution.put("surprise",surpriseDistribution);
     }
 
     @Override
