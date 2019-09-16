@@ -23,6 +23,8 @@ public class Character {
     @NotBlank
     private String gender;
 
+    private Double expressivenessScore = 0.5;
+
     private double probabilityOfOccurence;
 
     private List<TransitionMatrix> personality;

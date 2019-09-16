@@ -11,7 +11,7 @@ public class MathComponent {
     /*Generate a One Dimensional vector, where all elements sum up to One*/
     //TODO: Get a better, more mathematically appropriate Logic
     public double[] generateProbabilityVector(int size){
-        double a[] = new double[size];
+        double[] a = new double[size];
         double s = 0.0d;
         Random random = new Random();
         for (int i = 0; i < size; i++){
