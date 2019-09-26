@@ -37,8 +37,9 @@ public class ImageController {
             method = RequestMethod.GET,
             produces = MediaType.IMAGE_PNG_VALUE)
     @ApiOperation("Get a image registered in the system.")
-    public ResponseEntity<byte[]> getImage(@PathVariable("identityId") String identityId,
-                    @RequestParam(value = "emotion", required = false) String emotion){
+    public ResponseEntity<byte[]> getImage(
+            @PathVariable("identityId") String identityId,
+            @RequestParam(value = "emotion", required = false) String emotion){
         List<Image> images = imageRepository.findByImageMatchingAttributes(identityId, emotion);
         if(images.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -67,7 +68,9 @@ public class ImageController {
     @RequestMapping(value = "ids", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation("Get the ids of images registered in the system.")
     public String[] getAllImageIds(){
-            return imageRepository.findAll().stream().map(  x->x.getIdentity()).distinct().toArray(String[]::new);
+            return imageRepository.findAll()
+                    .stream()
+                        .map(  x->x.getIdentity()).distinct().toArray(String[]::new);
     }
 
     @RequestMapping(value = "node", method = RequestMethod.GET, produces = "application/json")

@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 /*The story class*/
+
 @Data
 @Document(collection = "story")
 public class Story {

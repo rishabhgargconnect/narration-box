@@ -6,10 +6,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ExpressionGeneratorImpl implements ExpressionGenerator {
@@ -25,7 +22,6 @@ public class ExpressionGeneratorImpl implements ExpressionGenerator {
 
         //Build tree for Anger
         ExpressionDistribution angerDistribution = new ExpressionDistribution();
-        angerDistribution.setE(0.7);
 
         //Expressive Distribution List
         List<Pair<Double, String>> expressiveDistributionList = new ArrayList<>();
@@ -45,7 +41,6 @@ public class ExpressionGeneratorImpl implements ExpressionGenerator {
 
         //Build tree for Happiness
         ExpressionDistribution happyDistribution = new ExpressionDistribution();
-        happyDistribution.setE(0.6);
 
         //Expressive Distribution List
         expressiveDistributionList = new ArrayList<>();
@@ -65,7 +60,6 @@ public class ExpressionGeneratorImpl implements ExpressionGenerator {
 
         //Build tree for Shame
         ExpressionDistribution shameDistribution = new ExpressionDistribution();
-        shameDistribution.setE(0.4);
 
         //Expressive Distribution List
         expressiveDistributionList = new ArrayList<>();
@@ -82,7 +76,6 @@ public class ExpressionGeneratorImpl implements ExpressionGenerator {
 
         //Build tree for Anger
         ExpressionDistribution surpriseDistribution = new ExpressionDistribution();
-        surpriseDistribution.setE(0.6);
 
         //Expressive Distribution List
         expressiveDistributionList = new ArrayList<>();
@@ -103,10 +96,19 @@ public class ExpressionGeneratorImpl implements ExpressionGenerator {
         if(!mapExpressionDistribution.containsKey(stateValue))
             return "No distribution available for state";
 
+        double[] expressiveArray = {expressiveness, 1- expressiveness};
+        int i = mathComponent.getIndexOfNextStateFromProbabilityVector(
+                    mathComponent.normalizeVector(expressiveArray));
+
         ExpressionDistribution dist = mapExpressionDistribution.get(stateValue);
-        List<Pair<Double, String>> expressionVector = expressiveness<= dist.getE()? dist.getExpressiveDistributionVector():
-                dist.getUnExpressiveDistributionVector();
-        double[] probabilityDistribution = ArrayUtils.toPrimitive(expressionVector.stream().map(x->x.getKey()).toArray(Double[]::new));
+        List<Pair<Double, String>> expressionVector = (i==0)?
+                dist.getExpressiveDistributionVector():
+                    dist.getUnExpressiveDistributionVector();
+
+        double[] probabilityDistribution = ArrayUtils.
+                toPrimitive(expressionVector.stream().
+                        map(x->x.getKey()).toArray(Double[]::new));
+
         probabilityDistribution = mathComponent.normalizeVector(probabilityDistribution);
         int index = mathComponent.getIndexOfNextStateFromProbabilityVector(probabilityDistribution);
         return expressionVector.get(index).getValue();
