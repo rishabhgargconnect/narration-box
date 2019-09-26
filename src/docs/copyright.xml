@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<author>
+    <name>Enter name of author here(Mandatory)</name>
+    <email>Enter email id of author here(Mandatory)</email>
+    <organization>Enter organization name here(Not mandatory)</organization>
+    <website>Enter organization name here(Not mandatory)</website>
+</author>
