@@ -107,7 +107,7 @@ def upload_folder(path_of_folder, root, type):
 
 
 # %%
-directory_path = r"C:\Users\nbhat\Documents\Comic\Image folder\images"
+directory_path = r"C:\Users\nbhat\Documents\Comic\Images"
 
 
 def parse_for_characters(directory_path):
