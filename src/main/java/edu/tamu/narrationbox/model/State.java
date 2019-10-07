@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.HashMap;
 import java.util.List;
 
 /* The base class for the state of a character. It can be
@@ -14,7 +15,7 @@ public class State {
     @Id
     private String id;
     private List<String> indices;
-    private List<String> expressionPriorityList;
+    private HashMap<String, List<String>> expressionPriorityList;
     private double[][] default_min;
     private double[][] default_max;
     public int getSizeOfMatrix() {
