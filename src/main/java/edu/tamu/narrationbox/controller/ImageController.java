@@ -73,6 +73,14 @@ public class ImageController {
                         .map(  x->x.getIdentity()).distinct().toArray(String[]::new);
     }
 
+    @RequestMapping(value = "{identityId}/expressions", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation("Get the expressions of  an image registered in the system.")
+    public String[] getAllImageExpressions(@PathVariable("identityId") String identityId){
+        return imageRepository.findExpressionsForImage(identityId)
+                .stream()
+                .map(  x->x.getEmotion()).distinct().toArray(String[]::new);
+    }
+
     @RequestMapping(value = "node", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation("Get the node in the system.")
     public TreeNode getNode(@RequestParam(value = "category", required = false) String path){
