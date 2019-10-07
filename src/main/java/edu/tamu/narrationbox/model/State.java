@@ -14,6 +14,7 @@ public class State {
     @Id
     private String id;
     private List<String> indices;
+    private List<String> expressionPriorityList;
     private double[][] default_min;
     private double[][] default_max;
     public int getSizeOfMatrix() {
