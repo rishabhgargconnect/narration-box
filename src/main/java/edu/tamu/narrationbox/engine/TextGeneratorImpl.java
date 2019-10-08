@@ -17,6 +17,7 @@ public class TextGeneratorImpl implements TextGenerator {
         pastParticiple.put("surprise", "surprised");
         pastParticiple.put("happy", "happy");
         pastParticiple.put("terror", "terrified");
+        pastParticiple.put("anger", "angry");
     }
 
     @Override
