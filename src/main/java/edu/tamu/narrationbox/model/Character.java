@@ -23,7 +23,7 @@ public class Character {
     @NotBlank
     private String gender;
 
-    private Double expressivenessScore;
+    private Double expressiveness;
 
     private double probabilityOfOccurence;
 

@@ -92,7 +92,7 @@ public class StateGeneratorImpl implements StateGenerator {
                 stateValues.setValueAtIndexOfLargestComponent(stateValueAtLargestIndex);
                 stateValues.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),
                         null,stateValueAtLargestIndex, null, character.getGender()));
-                stateValues.setExpressionText(expressionGenerator.getExpressionFromState(stateValueAtLargestIndex, character.getExpressivenessScore() ));
+                stateValues.setExpressionText(expressionGenerator.getExpressionFromState(stateValueAtLargestIndex, character.getExpressiveness() ));
                 listOfStateValues.add(stateValues);
             }
 
@@ -222,7 +222,7 @@ public class StateGeneratorImpl implements StateGenerator {
                         mathComponent.getIndexOfLargestComponent(roundedStateVector));
                 newStateValue.setValueAtIndexOfLargestComponent(indexOfNewState);
 
-                newStateValue.setExpressionText(expressionGenerator.getExpressionFromState(indexOfNewState, character.getExpressivenessScore() ));
+                newStateValue.setExpressionText(expressionGenerator.getExpressionFromState(indexOfNewState, character.getExpressiveness() ));
 
 
                 newStateValue.setStateText(textGenerator.getCausalityText(character.getIdentity().getTitle(),
