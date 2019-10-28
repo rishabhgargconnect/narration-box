@@ -78,6 +78,7 @@ public class ImageController {
     public String[] getAllImageExpressions(@PathVariable("identityId") String identityId){
         return imageRepository.findExpressionsForImage(identityId)
                 .stream()
+                .filter(x -> x!=null && x.getEmotion()!=null && !x.getEmotion().equalsIgnoreCase("thumbnail"))
                 .map(  x->x.getEmotion()).distinct().toArray(String[]::new);
     }
 
