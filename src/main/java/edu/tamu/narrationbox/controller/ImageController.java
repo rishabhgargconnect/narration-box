@@ -1,8 +1,10 @@
 package edu.tamu.narrationbox.controller;
 
+import edu.tamu.narrationbox.enums.ImgType;
 import edu.tamu.narrationbox.model.Image;
 import edu.tamu.narrationbox.model.TreeNode;
 import edu.tamu.narrationbox.repository.ImageRepository;
+import edu.tamu.narrationbox.service.aws.S3UploadService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,10 @@ public class ImageController {
 
     @Autowired
     public ImageRepository imageRepository;
+
+    @Autowired
+    public S3UploadService s3UploadService;
+
 
     @RequestMapping(value = "default", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation("Get the default pic of all the images registered in the system.")
@@ -99,6 +105,11 @@ public class ImageController {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation("Register a image in the system.")
     public String createImage(@RequestBody Image image) {
+        if (!ImgType.CATEGORY.getValue().equals(image.getType())) {
+            String s3Url = s3UploadService.uploadFile(image.getUploadFile());
+            image.setFile(s3Url);
+        }
+
         imageRepository.save(image);
         return "Success";
     }

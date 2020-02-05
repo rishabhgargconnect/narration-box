@@ -1,6 +1,6 @@
 package edu.tamu.narrationbox.controller;
 
-import edu.tamu.narrationbox.model.aws.AmazonClient;
+import edu.tamu.narrationbox.service.aws.S3UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,20 +13,20 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/storage/")
 public class BucketController {
 
-    private AmazonClient amazonClient;
+    private S3UploadService s3UploadService;
 
     @Autowired
-    BucketController(AmazonClient amazonClient) {
-        this.amazonClient = amazonClient;
+    BucketController(S3UploadService s3UploadService) {
+        this.s3UploadService = s3UploadService;
     }
 
     @PostMapping("/uploadFile")
     public String uploadFile(@RequestPart(value = "file") MultipartFile file) {
-        return this.amazonClient.uploadFile(file);
+        return this.s3UploadService.uploadFile(file);
     }
 
     @DeleteMapping("/deleteFile")
     public String deleteFile(@RequestPart(value = "url") String fileUrl) {
-        return this.amazonClient.deleteFileFromS3Bucket(fileUrl);
+        return this.s3UploadService.deleteFileFromS3Bucket(fileUrl);
     }
 }
