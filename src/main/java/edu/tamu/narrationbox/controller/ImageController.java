@@ -40,18 +40,19 @@ public class ImageController {
     }
 
     @RequestMapping(value = "{identityId}",
-            method = RequestMethod.GET,
-            produces = MediaType.IMAGE_PNG_VALUE)
-    @ApiOperation("Get a image registered in the system.")
-    public ResponseEntity<byte[]> getImage(@PathVariable("identityId") String identityId,
-                                           @RequestParam(value = "emotion", required = false) String emotion) {
+            method = RequestMethod.GET)
+    @ApiOperation("Get a image url registered in the system.")
+    public String getImage(@PathVariable("identityId") String identityId,
+                           @RequestParam(value = "emotion", required = false) String emotion) {
+        System.out.println("identityId= " + identityId);
+
         List<Image> images = imageRepository.findByImageMatchingAttributes(identityId, emotion);
         if (images.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return "";
         }
-        String image = images.get(0).getFile();
-        return new ResponseEntity<>(Base64.getDecoder().decode
-                (image.substring(2, image.length() - 1)), HttpStatus.OK); //Remove /b which gets added from the python script
+        String imageUrl = images.get(0).getFile();
+//        System.out.println("Image url = " + imageUrl);
+        return imageUrl;
 
     }
 
@@ -77,15 +78,15 @@ public class ImageController {
 
     @RequestMapping(value = "node", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation("Get the node in the system.")
-    public TreeNode getNode(@RequestParam(value = "category", required = false) String path){
-        if(path == null){
+    public TreeNode getNode(@RequestParam(value = "category", required = false) String path) {
+        if (path == null) {
             path = "";
         }
 
-        String regexPath = MessageFormat.format("^{0}\\/[\\w-]+(?!\\/)$", path) ;
+        String regexPath = MessageFormat.format("^{0}\\/[\\w-]+(?!\\/)$", path);
         TreeNode node = new TreeNode();
-        node.setCategories(imageRepository.getImagesOnPath(regexPath, "category").stream().map(x-> (x.getPath())).toArray(String[]::new));
-        node.setCharacters(imageRepository.getImagesOnPath(regexPath, "character").stream().map(x-> getNameOfCharacter(x.getPath())).toArray(String[]::new));
+        node.setCategories(imageRepository.getImagesOnPath(regexPath, "category").stream().map(x -> (x.getPath())).toArray(String[]::new));
+        node.setCharacters(imageRepository.getImagesOnPath(regexPath, "character").stream().map(x -> getNameOfCharacter(x.getPath())).toArray(String[]::new));
         return node;
     }
 

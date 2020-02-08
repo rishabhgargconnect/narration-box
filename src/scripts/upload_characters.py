@@ -8,6 +8,8 @@ import os
 import io
 import math
 from PIL import Image
+import time
+
 
 
 #Test
@@ -97,38 +99,39 @@ def is_path_an_image_file(full_file_path):
 # %%
 
 
-def upload_character(path_of_folder, root):
-    name_of_folder = os.path.basename(path_of_folder)
-    upload_folder(path_of_folder, root, 'character')
+def upload_character(path_of_folder, root, isFolderThumbnail):
+#     name_of_folder = os.path.basename(path_of_folder)
+#     upload_folder(path_of_folder, root, 'character')
     for file in os.listdir(path_of_folder):
+
         full_file_path = os.path.join(path_of_folder, file)
         print("file = ", file)
         print("full_file_path = ", full_file_path)
         if(is_path_an_image_file(full_file_path)):
-            file_S3_url = send_http_request_upload_s3(file, full_file_path)
+            file_S3_url = send_http_request_upload_s3(os.path.basename(path_of_folder)+"_"+file, full_file_path)
+#             time.sleep(2.4)
+
             print("file_S3_url= ", file_S3_url)
 #             encoded_string = resize_and_encode(full_file_path, 256)
             if(os.path.splitext(file)[0] == 'default'):
                 json_data = {
-                    'path': "/" + str.replace(os.path.relpath(path_of_folder, root), '\\', '/'),
-                    'identity': name_of_folder,
+                    'path': "/" + os.path.relpath(full_file_path, root).split(".")[0],
+                    'identity': os.path.basename(path_of_folder),
                     'emotion': 'thumbnail',
                     'file': file_S3_url,
-#                     'uploadFile':file,
                     'type': 'character'}
 
             else:
                 json_data = {
-                'path': "/" + str.replace(os.path.relpath(path_of_folder, root), '\\', '/'),
-                'identity': name_of_folder,
+                'path': "/" + os.path.relpath(full_file_path, root).split(".")[0],
+                'identity': os.path.basename(path_of_folder),
                 'emotion': os.path.splitext(file)[0],
                 'file': file_S3_url,
-#                 'uploadFile':file,
                 'type': 'character'
             }
 
             send_http_request(json_data)
-            print(json_data['path'])
+#             print(json_data['path'])
 #
 #             if(os.path.splitext(file)[0] == 'default'):
 #                 encoded_string = resize_and_encode(full_file_path, 64)
@@ -145,7 +148,7 @@ def upload_character(path_of_folder, root):
 def upload_folder(path_of_folder, root, type):
     name_of_folder = os.path.basename(path_of_folder)
     json_data = {
-        'path': "/" + str.replace(os.path.relpath(path_of_folder, root), '\\', '/'),
+        'path': "/" + os.path.relpath(path_of_folder, root),
         'identity': name_of_folder,
         'type': type
     }
@@ -153,22 +156,33 @@ def upload_folder(path_of_folder, root, type):
 
 
 # %%
-directory_path = r"./CartoonFolder"
+directory_path = r"./CartoonFolder/"
 
 
 def parse_for_characters(directory_path):
     for root, dirs, files in os.walk(directory_path, topdown=True):
         dirs[:] = [d for d in dirs if d != '.svn']
-        if files is not None and 'default.png' in files:
-            yield (root, 'Character')
-        else:
-            yield(root, 'Category')
+        print("root= ", root, " ,dirs = ", dirs, " ,files=", files)
+
+        #Emotion images
+        if files is not None and 'default.png' in files and dirs is None:
+            yield (root, 'Character', 0)
+        #Folder thumbnail image
+        elif files is not None and 'default.png' in files and dirs is not None:
+            yield (root, 'Character', 1)
+
+        #general upload folder paths
+        if dirs is not None:
+            for dir in dirs:
+                yield(root+"/"+dir, 'Category', 0)
 
 
-for (path_of_resource, type) in parse_for_characters(directory_path):
+for (path_of_resource, type, isFolderThumbnail) in parse_for_characters(directory_path):
 #     print("path_of_resource = ", path_of_resource)
 #     print("type = ", type)
     if type == 'Character':
-        upload_character(path_of_resource, directory_path)
+        upload_character(path_of_resource, directory_path, isFolderThumbnail)
     elif type == 'Category':
         upload_folder(path_of_resource, directory_path, 'category')
+
+# parse_for_characters(directory_path)
