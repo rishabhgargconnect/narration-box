@@ -22,6 +22,7 @@ public class BucketController {
 
     @PostMapping("/uploadFile")
     public String uploadFile(@RequestPart(value = "files") MultipartFile file) {
+        System.out.println("HELLO!WHATUP");
         return this.s3UploadService.uploadFile(file);
     }
 

@@ -9,39 +9,53 @@ import io
 import math
 from PIL import Image
 
+
+#Test
+# headers = {'content-type': 'application/json'}
+#
+# r = requests.get(URL, headers=headers)
+#
+# print("r = ",r.text)
+# print("r = ",r.status_code)
+
 # %%
-URL = "https://narration-box.herokuapp.com/images/"
+URL = "http://localhost:8080/images/"
 # URL_other = "https://localhost:8080/images/"
-URL_S3_UPLOAD = "https://narration-box.herokuapp.com/storage/uploadFile"
+URL_S3_UPLOAD = "http://localhost:8080/storage/uploadFile"
 
-
-
-# switch if you want to debug script without actually sending content
+# # switch if you want to debug script without actually sending content
 disable_sending_requests = False
-
-# %%
-def image_to_byte_array(image: Image, format):
-    imgByteArr = io.BytesIO()
-    image.save(imgByteArr, format=format)
-    imgByteArr = imgByteArr.getvalue()
-    return imgByteArr
-
-#for updation to s3
+#
+# # %%
+# def image_to_byte_array(image: Image, format):
+#     imgByteArr = io.BytesIO()
+#     image.save(imgByteArr, format=format)
+#     imgByteArr = imgByteArr.getvalue()
+#     return imgByteArr
+#
+# #for updation to s3
 def send_http_request_upload_s3(image_filename, image_path):
-    multipart_form_data = {
-            'image': (image_filename, open(image_path, 'rb'))
-    }
-    response = requests.post(URL_S3_UPLOAD, files = multipart_form_data)
+    files = {'files': open(image_path, 'rb')}
+    response = requests.post(URL_S3_UPLOAD, files = files)
+#     print("s3 response = ", response)
+    return response.text
+# ./CartoonFolder/CartoonCharacters/male02/fakesmile.png - not working
+# /Users/rgarg/Desktop/test.png - working
+
+# send_http_request_upload_s3('testing','/Users/rgarg/Documents/narration-box/narration-box/src/scripts/CartoonFolder/CartoonCharacters/male02/fakesmile2temp.png')
 
 
+#
+#
 #for updation to mongo
 def send_http_request(data):
     headers = {'content-type': 'application/json'}
     if not disable_sending_requests:
         try:
             r = requests.post(URL, data=json.dumps(data), headers=headers)
-            print(r)
-            print(data['type'])
+#             print("r = ", r)
+#             print(r)
+#             print(data['type'])
         except requests.exceptions.ConnectionError:
             print("some exception occured")
 
@@ -88,8 +102,11 @@ def upload_character(path_of_folder, root):
     upload_folder(path_of_folder, root, 'character')
     for file in os.listdir(path_of_folder):
         full_file_path = os.path.join(path_of_folder, file)
+        print("file = ", file)
+        print("full_file_path = ", full_file_path)
         if(is_path_an_image_file(full_file_path)):
             file_S3_url = send_http_request_upload_s3(file, full_file_path)
+            print("file_S3_url= ", file_S3_url)
 #             encoded_string = resize_and_encode(full_file_path, 256)
             if(os.path.splitext(file)[0] == 'default'):
                 json_data = {
@@ -98,7 +115,7 @@ def upload_character(path_of_folder, root):
                     'emotion': 'thumbnail',
                     'file': file_S3_url,
 #                     'uploadFile':file,
-                    'type': 'emotion'}
+                    'type': 'character'}
 
             else:
                 json_data = {
@@ -107,7 +124,7 @@ def upload_character(path_of_folder, root):
                 'emotion': os.path.splitext(file)[0],
                 'file': file_S3_url,
 #                 'uploadFile':file,
-                'type': 'emotion'
+                'type': 'character'
             }
 
             send_http_request(json_data)
@@ -130,7 +147,6 @@ def upload_folder(path_of_folder, root, type):
     json_data = {
         'path': "/" + str.replace(os.path.relpath(path_of_folder, root), '\\', '/'),
         'identity': name_of_folder,
-        'file': "",  # add thumbnail for folder if required
         'type': type
     }
     send_http_request(json_data)
@@ -150,8 +166,8 @@ def parse_for_characters(directory_path):
 
 
 for (path_of_resource, type) in parse_for_characters(directory_path):
-    print("path_of_resource = ", path_of_resource)
-    print("type = ", type)
+#     print("path_of_resource = ", path_of_resource)
+#     print("type = ", type)
     if type == 'Character':
         upload_character(path_of_resource, directory_path)
     elif type == 'Category':

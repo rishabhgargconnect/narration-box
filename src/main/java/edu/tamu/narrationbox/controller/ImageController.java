@@ -77,24 +77,15 @@ public class ImageController {
 
     @RequestMapping(value = "node", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation("Get the node in the system.")
-    public TreeNode getNode(@RequestParam(value = "category", required = false) String path) {
-        System.out.println("Hello");
-
-        if (path == null) {
+    public TreeNode getNode(@RequestParam(value = "category", required = false) String path){
+        if(path == null){
             path = "";
-            String[] a = {"as", "qw"};
-            TreeNode node = new TreeNode();
-            node.setCategories(a);
-            return node;
         }
 
-        String regexPath = MessageFormat.format("^{0}\\/[\\w-]+(?!\\/)$", path);
-        System.out.println("regexPath = " + regexPath);
+        String regexPath = MessageFormat.format("^{0}\\/[\\w-]+(?!\\/)$", path) ;
         TreeNode node = new TreeNode();
-        node.setCategories(imageRepository.getImagesOnPath(regexPath, "category").stream().map(x -> (x.getPath())).toArray(String[]::new));
-        node.setCharacters(imageRepository.getImagesOnPath(regexPath, "character").stream().map(x -> getNameOfCharacter(x.getPath())).toArray(String[]::new));
-        String[] a = {"as", "qw"};
-        node.setCategories(a);
+        node.setCategories(imageRepository.getImagesOnPath(regexPath, "category").stream().map(x-> (x.getPath())).toArray(String[]::new));
+        node.setCharacters(imageRepository.getImagesOnPath(regexPath, "character").stream().map(x-> getNameOfCharacter(x.getPath())).toArray(String[]::new));
         return node;
     }
 
@@ -105,12 +96,11 @@ public class ImageController {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation("Register a image in the system.")
     public String createImage(@RequestBody Image image) {
-        if (!ImgType.CATEGORY.getValue().equals(image.getType())) {
-            String s3Url = s3UploadService.uploadFile(image.getUploadFile());
-            image.setFile(s3Url);
+        try {
+            imageRepository.save(image);
+        } catch (Exception e) {
+            System.out.println("Failed to upload image in mongo repo" + e.getMessage());
         }
-
-        imageRepository.save(image);
-        return "Success";
+        return "Failure";
     }
 }
